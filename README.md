@@ -1,5 +1,17 @@
 # mars_rover
 
+A Mars Rover app by James Doepp
+
+# Instructions:
+
+This is a command line application. Please unzip, and change directories to the app in a terminal. Type
+
+```python mars_rover.py```
+
+to run.
+
+
+
 ## Problem - Mars Rover
 
 A squad of robotic rovers are to be landed by NASA on a plateau on Mars. This plateau, which is curiously rectangular, must be navigated by the rovers so that their on-board cameras can get a complete view of the surrounding terrain to send back to Earth.
