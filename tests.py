@@ -25,10 +25,10 @@ class DirectionsTests(unittest.TestCase):
         self.assertEqual(self.directions.n.right.direction, 'E')
         self.assertEqual(self.directions.s.left.direction, 'E')
         self.assertEqual(self.directions.s.right.direction, 'W')
-        self.assertEqual(self.directions.e.left.direction, 'S')
-        self.assertEqual(self.directions.e.right.direction, 'N')
-        self.assertEqual(self.directions.w.left.direction, 'N')
-        self.assertEqual(self.directions.w.right.direction, 'S')
+        self.assertEqual(self.directions.e.left.direction, 'N')
+        self.assertEqual(self.directions.e.right.direction, 'S')
+        self.assertEqual(self.directions.w.left.direction, 'S')
+        self.assertEqual(self.directions.w.right.direction, 'N')
 
     def test_get_node_from_val(self):
         '''Test that the correct node can be retrieved using the direction (N,S,W,E)'''
@@ -106,6 +106,103 @@ class PlateauTests(unittest.TestCase):
     def test_set_value(self):
         self.plateau_6x6.set_value(3,3, 1)
         self.assertEqual(self.plateau_6x6.grid[3][3], 1)
+
+
+class RoverTests(unittest.TestCase):
+    def setUp(self):
+        self.plateau = mars_rover.Plateau([5,5])
+        self.start_location = [1,2]
+        self.rover = mars_rover.Rover(*self.start_location, 'N', self.plateau)
+
+        self.assertEqual(self.rover.location, (3,1))
+        self.assertEqual(self.plateau.grid[3][1], 1)
+        self.assertEqual(self.rover.current_orientation.direction, 'N')
+    
+    def test_change_loc(self):
+        dest = (3,2)
+        self.rover.change_loc(dest)
+        self.assertEqual(self.plateau.grid[3][1], 0)
+        self.assertEqual(self.plateau.grid[3][2], 1)
+
+
+    def test_move(self):
+        self.plateau = mars_rover.Plateau([5,5])
+        self.rover = mars_rover.Rover(*self.start_location, 'N', self.plateau)
+        self.rover.move()
+        self.assertEqual(self.rover.location, (2,1))
+
+        self.plateau = mars_rover.Plateau([5,5])
+        self.rover = mars_rover.Rover(*self.start_location, 'S', self.plateau)
+        self.rover.move()
+        self.assertEqual(self.rover.location, (4,1))
+
+        self.plateau = mars_rover.Plateau([5,5])
+        self.rover = mars_rover.Rover(*self.start_location, 'W', self.plateau)
+        self.rover.move()
+        self.assertEqual(self.rover.location, (3,0))
+
+        self.plateau = mars_rover.Plateau([5,5])
+        self.rover = mars_rover.Rover(*self.start_location, 'E', self.plateau)
+        self.rover.move()
+        self.assertEqual(self.rover.location, (3,2))
+
+        '''If it reaches the edge it should remain in place'''
+        self.plateau = mars_rover.Plateau([5,5])
+        self.rover = mars_rover.Rover(0,0, 'S', self.plateau)
+        self.assertEqual(self.rover.location, (5,0))
+        self.rover.move()
+        self.assertEqual(self.rover.location, (5,0))
+
+        self.plateau = mars_rover.Plateau([5,5])
+        self.rover = mars_rover.Rover(0,0, 'W', self.plateau)
+        self.assertEqual(self.rover.location, (5,0))
+        self.rover.move()
+        self.assertEqual(self.rover.location, (5,0))
+
+        self.plateau = mars_rover.Plateau([5,5])
+        self.rover = mars_rover.Rover(0,5, 'N', self.plateau)
+        self.assertEqual(self.rover.location, (0,0))
+        self.rover.move()
+        self.assertEqual(self.rover.location, (0,0))
+
+        self.plateau = mars_rover.Plateau([5,5])
+        self.rover = mars_rover.Rover(5,5, 'E', self.plateau)
+        self.assertEqual(self.rover.location, (0,5))
+        self.rover.move()
+        self.assertEqual(self.rover.location, (0,5))
+
+    def test_turn(self):
+        self.rover = mars_rover.Rover(*self.start_location, 'N', self.plateau)
+        self.rover.turn('left')
+        self.assertEqual(self.rover.current_orientation.direction, 'W')
+
+        self.rover = mars_rover.Rover(*self.start_location, 'N', self.plateau)
+        self.rover.turn('right')
+        self.assertEqual(self.rover.current_orientation.direction, 'E')
+
+        self.rover = mars_rover.Rover(*self.start_location, 'S', self.plateau)
+        self.rover.turn('left')
+        self.assertEqual(self.rover.current_orientation.direction, 'E')
+
+        self.rover = mars_rover.Rover(*self.start_location, 'S', self.plateau)
+        self.rover.turn('right')
+        self.assertEqual(self.rover.current_orientation.direction, 'W')
+
+        self.rover = mars_rover.Rover(*self.start_location, 'W', self.plateau)
+        self.rover.turn('left')
+        self.assertEqual(self.rover.current_orientation.direction, 'S')
+
+        self.rover = mars_rover.Rover(*self.start_location, 'W', self.plateau)
+        self.rover.turn('right')
+        self.assertEqual(self.rover.current_orientation.direction, 'N')
+
+        self.rover = mars_rover.Rover(*self.start_location, 'E', self.plateau)
+        self.rover.turn('left')
+        self.assertEqual(self.rover.current_orientation.direction, 'N')
+
+        self.rover = mars_rover.Rover(*self.start_location, 'E', self.plateau)
+        self.rover.turn('right')
+        self.assertEqual(self.rover.current_orientation.direction, 'S')
 
 if __name__ == "__main__":
     unittest.main()
