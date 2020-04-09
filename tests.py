@@ -19,7 +19,7 @@ class DirectionsTests(unittest.TestCase):
     def setUp(self):
         self.directions = mars_rover.Directions()
     def test_add_notes(self):
-        '''Test that the directions to the L and R of each direction are linked properly'''
+        '''Tests that the directions to the L and R of each direction are linked properly'''
         self.assertIsInstance(self.directions.nodes, dict)
         self.assertEqual(self.directions.n.left.direction, 'W')
         self.assertEqual(self.directions.n.right.direction, 'E')
@@ -31,7 +31,7 @@ class DirectionsTests(unittest.TestCase):
         self.assertEqual(self.directions.w.right.direction, 'N')
 
     def test_get_node_from_val(self):
-        '''Test that the correct node can be retrieved using the direction (N,S,W,E)'''
+        '''Tests that the correct node can be retrieved using the direction (N,S,W,E)'''
         north_node = self.directions.get_node_from_val('N')
         self.assertEqual(north_node.direction, 'N')
         south_node = self.directions.get_node_from_val('S')
@@ -42,7 +42,7 @@ class DirectionsTests(unittest.TestCase):
         self.assertEqual(east_node.direction, 'E')
 
 class PlateauTests(unittest.TestCase):
-    '''Test the laying out of the matrix and transposition'''
+    '''Tests the laying out of the matrix and transposition'''
     def setUp(self):
         self.plateau_2x4 = mars_rover.Plateau([1,3])
         self.plateau_4x4 = mars_rover.Plateau([3,3])
@@ -54,6 +54,8 @@ class PlateauTests(unittest.TestCase):
     
     def test_transpose(self):
         '''
+        Tests the location of the grid transposed from the source at lower left corner, and from x,y to row, column
+
         A 4x4 grid transposed: plateau to matrix grid
              (0,3) (1,3) (2,3) (3,3)      (0,0) (0,1) (0,2) (0,3)
              (0,2) (1,2) (2,2) (3,2) ==>  (1,0) (1,1) (1,2) (1,3)       
@@ -126,6 +128,7 @@ class RoverTests(unittest.TestCase):
 
 
     def test_move(self):
+        '''Test the move function of the rover in different directions, checking the new location'''
         self.plateau = mars_rover.Plateau([5,5])
         self.rover = mars_rover.Rover(*self.start_location, 'N', self.plateau)
         self.rover.move()
@@ -172,6 +175,7 @@ class RoverTests(unittest.TestCase):
         self.assertEqual(self.rover.location, (0,5))
 
     def test_turn(self):
+        '''Tests left and right turns for each orientation'''
         self.rover = mars_rover.Rover(*self.start_location, 'N', self.plateau)
         self.rover.turn('left')
         self.assertEqual(self.rover.current_orientation.direction, 'W')
@@ -203,6 +207,19 @@ class RoverTests(unittest.TestCase):
         self.rover = mars_rover.Rover(*self.start_location, 'E', self.plateau)
         self.rover.turn('right')
         self.assertEqual(self.rover.current_orientation.direction, 'S')
+    
+    def test_take_commands(self):
+        self.plateau = mars_rover.Plateau([5,5])
+        self.rover = mars_rover.Rover(*self.start_location, 'N', self.plateau)
+        self.rover.take_commands('mmlr')
+        print(self.rover.location)
+        print(self.rover.transposed_location)
+        print(self.rover.current_orientation.direction)
+        self.assertEqual(self.rover.location, (1,1))
+        self.assertEqual(self.rover.transposed_location, (1,4))
+        self.assertEqual(self.rover.orientation.direction, 'N')
+
+
 
 if __name__ == "__main__":
     unittest.main()
